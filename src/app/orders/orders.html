@@ -1,0 +1,905 @@
+<div class="orders-page">
+
+  <!-- ========================================= -->
+  <!-- NAVBAR -->
+  <!-- ========================================= -->
+
+  <nav class="orders-navbar">
+
+    <div class="brand">
+      <div class="brand-icon">🎁</div>
+
+      <div>
+        <h2>Ramveda</h2>
+        <span>Thoughtful Gifts</span>
+      </div>
+    </div>
+
+
+    <div class="nav-links">
+
+      <a routerLink="/">
+        Home
+      </a>
+
+      <a routerLink="/products">
+        Gifts
+      </a>
+
+      <a routerLink="/cart">
+        Cart
+      </a>
+
+      <a
+        routerLink="/orders"
+        class="active"
+      >
+        My Orders
+      </a>
+
+    </div>
+
+  </nav>
+
+
+  <!-- ========================================= -->
+  <!-- HERO -->
+  <!-- ========================================= -->
+
+  <section class="orders-hero">
+
+    <div class="hero-content">
+
+      <span class="hero-badge">
+        ✨ YOUR SHOPPING JOURNEY
+      </span>
+
+      <h1>
+        My Orders
+      </h1>
+
+      <p>
+        Keep track of your gifts from the moment
+        you place your order until they reach you.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- ========================================= -->
+  <!-- MAIN CONTENT -->
+  <!-- ========================================= -->
+
+  <main class="orders-container">
+
+
+    <!-- ======================================= -->
+    <!-- LOADING -->
+    <!-- ======================================= -->
+
+    @if (loading) {
+
+      <div class="state-card">
+
+        <div class="loading-spinner"></div>
+
+        <h3>
+          Loading your orders...
+        </h3>
+
+        <p>
+          Please wait while we fetch your
+          latest orders.
+        </p>
+
+      </div>
+
+    }
+
+
+    <!-- ======================================= -->
+    <!-- ERROR -->
+    <!-- ======================================= -->
+
+    @else if (errorMessage) {
+
+      <div class="state-card error-state">
+
+        <div class="state-icon">
+          ⚠️
+        </div>
+
+        <h3>
+          Something went wrong
+        </h3>
+
+        <p>
+          {{ errorMessage }}
+        </p>
+
+        <button
+          type="button"
+          class="retry-button"
+          (click)="loadOrders()"
+        >
+          Try Again
+        </button>
+
+      </div>
+
+    }
+
+
+    <!-- ======================================= -->
+    <!-- EMPTY -->
+    <!-- ======================================= -->
+
+    @else if (orders.length === 0) {
+
+      <div class="state-card empty-state">
+
+        <div class="empty-icon">
+          🎁
+        </div>
+
+        <h2>
+          No orders yet
+        </h2>
+
+        <p>
+          Your beautiful gifts are waiting for you.
+          Start shopping and your orders will appear here.
+        </p>
+
+        <a
+          routerLink="/products"
+          class="shop-button"
+        >
+          Explore Gifts →
+        </a>
+
+      </div>
+
+    }
+
+
+    <!-- ======================================= -->
+    <!-- ORDERS -->
+    <!-- ======================================= -->
+
+    @else {
+
+      <!-- Orders heading -->
+
+      <div class="orders-heading">
+
+        <div>
+
+          <span class="section-label">
+            ORDER HISTORY
+          </span>
+
+          <h2>
+            Your Gift Orders
+          </h2>
+
+        </div>
+
+        <div class="order-count">
+
+          <strong>
+            {{ orders.length }}
+          </strong>
+
+          <span>
+            {{ orders.length === 1 ? 'Order' : 'Orders' }}
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <!-- ===================================== -->
+      <!-- ORDER LIST -->
+      <!-- ===================================== -->
+
+      <div class="orders-list">
+
+        @for (
+          order of orders;
+          track order.id
+        ) {
+
+          <article class="order-card">
+
+
+            <!-- ================================= -->
+            <!-- ORDER HEADER -->
+            <!-- ================================= -->
+
+            <div class="order-header">
+
+
+              <div class="order-main-info">
+
+                <span class="order-label">
+                  ORDER
+                </span>
+
+                <h3>
+                  #{{ order.id }}
+                </h3>
+
+                <span class="order-date">
+                  {{ formatDate(order.createdAt) }}
+
+                  @if (order.createdAt) {
+                    ·
+                    {{ formatTime(order.createdAt) }}
+                  }
+
+                </span>
+
+              </div>
+
+
+              <div class="order-header-right">
+
+                <span
+                  class="status-badge"
+                  [class]="getStatusClass(order.status)"
+                >
+
+                  @switch (
+                    order.status?.toUpperCase()
+                  ) {
+
+                    @case ('PLACED') {
+                      🕐 Placed
+                    }
+
+                    @case ('CONFIRMED') {
+                      ✓ Confirmed
+                    }
+
+                    @case ('SHIPPED') {
+                      🚚 Shipped
+                    }
+
+                    @case ('DELIVERED') {
+                      ✓ Delivered
+                    }
+
+                    @case ('CANCELLED') {
+                      ✕ Cancelled
+                    }
+
+                    @default {
+                      {{ order.status }}
+                    }
+
+                  }
+
+                </span>
+
+
+                <strong class="header-total">
+
+                  {{ getCurrency(order) }}
+
+                  {{ order.total.toFixed(2) }}
+
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <!-- ================================= -->
+            <!-- VIEW DETAILS BUTTON -->
+            <!-- ================================= -->
+
+            <button
+              type="button"
+              class="view-order-button"
+              (click)="toggleOrder(order.id)"
+            >
+
+              <span>
+
+                @if (
+                  expandedOrderId === order.id
+                ) {
+
+                  Hide Order Details
+
+                } @else {
+
+                  View Order Details
+
+                }
+
+              </span>
+
+
+              <span class="arrow">
+
+                @if (
+                  expandedOrderId === order.id
+                ) {
+
+                  ↑
+
+                } @else {
+
+                  →
+
+                }
+
+              </span>
+
+            </button>
+
+
+            <!-- ================================= -->
+            <!-- EXPANDED DETAILS -->
+            <!-- ================================= -->
+
+            @if (
+              expandedOrderId === order.id
+            ) {
+
+
+              <div class="order-details">
+
+
+                <!-- ============================= -->
+                <!-- STATUS TIMELINE -->
+                <!-- ============================= -->
+
+                <section class="order-progress-section">
+
+                  <div class="section-title">
+
+                    <span>
+                      ORDER STATUS
+                    </span>
+
+                    <strong>
+                      {{ order.status }}
+                    </strong>
+
+                  </div>
+
+
+                  <div class="order-progress">
+
+
+                    <!-- PLACED -->
+
+                    <div
+                      class="progress-step"
+                      [class.completed]="
+                        isStepCompleted(order, 1)
+                      "
+                    >
+
+                      <div class="progress-circle">
+
+                        @if (
+                          isStepCompleted(order, 1)
+                        ) {
+                          ✓
+                        } @else {
+                          1
+                        }
+
+                      </div>
+
+                      <span>
+                        Order Placed
+                      </span>
+
+                    </div>
+
+
+                    <div
+                      class="progress-line"
+                      [class.completed]="
+                        isStepCompleted(order, 2)
+                      "
+                    ></div>
+
+
+                    <!-- CONFIRMED -->
+
+                    <div
+                      class="progress-step"
+                      [class.completed]="
+                        isStepCompleted(order, 2)
+                      "
+                    >
+
+                      <div class="progress-circle">
+
+                        @if (
+                          isStepCompleted(order, 2)
+                        ) {
+                          ✓
+                        } @else {
+                          2
+                        }
+
+                      </div>
+
+                      <span>
+                        Confirmed
+                      </span>
+
+                    </div>
+
+
+                    <div
+                      class="progress-line"
+                      [class.completed]="
+                        isStepCompleted(order, 3)
+                      "
+                    ></div>
+
+
+                    <!-- SHIPPED -->
+
+                    <div
+                      class="progress-step"
+                      [class.completed]="
+                        isStepCompleted(order, 3)
+                      "
+                    >
+
+                      <div class="progress-circle">
+
+                        @if (
+                          isStepCompleted(order, 3)
+                        ) {
+                          ✓
+                        } @else {
+                          3
+                        }
+
+                      </div>
+
+                      <span>
+                        Shipped
+                      </span>
+
+                    </div>
+
+
+                    <div
+                      class="progress-line"
+                      [class.completed]="
+                        isStepCompleted(order, 4)
+                      "
+                    ></div>
+
+
+                    <!-- DELIVERED -->
+
+                    <div
+                      class="progress-step"
+                      [class.completed]="
+                        isStepCompleted(order, 4)
+                      "
+                    >
+
+                      <div class="progress-circle">
+
+                        @if (
+                          isStepCompleted(order, 4)
+                        ) {
+                          ✓
+                        } @else {
+                          4
+                        }
+
+                      </div>
+
+                      <span>
+                        Delivered
+                      </span>
+
+                    </div>
+
+                  </div>
+
+                </section>
+
+
+                <!-- ============================= -->
+                <!-- CUSTOMER INFORMATION -->
+                <!-- ============================= -->
+
+                <section class="customer-box">
+
+                  <div class="section-title">
+
+                    <span>
+                      CUSTOMER INFORMATION
+                    </span>
+
+                  </div>
+
+
+                  <div class="customer-grid">
+
+
+                    <div class="customer-item">
+
+                      <span class="info-icon">
+                        👤
+                      </span>
+
+                      <div>
+
+                        <small>
+                          NAME
+                        </small>
+
+                        <strong>
+                          {{ order.customerName }}
+                        </strong>
+
+                      </div>
+
+                    </div>
+
+
+                    <div class="customer-item">
+
+                      <span class="info-icon">
+                        ✉️
+                      </span>
+
+                      <div>
+
+                        <small>
+                          EMAIL
+                        </small>
+
+                        <strong>
+                          {{ order.email }}
+                        </strong>
+
+                      </div>
+
+                    </div>
+
+
+                    <div class="customer-item">
+
+                      <span class="info-icon">
+                        📱
+                      </span>
+
+                      <div>
+
+                        <small>
+                          PHONE
+                        </small>
+
+                        <strong>
+                          {{ order.phone }}
+                        </strong>
+
+                      </div>
+
+                    </div>
+
+
+                    <div class="customer-item">
+
+                      <span class="info-icon">
+                        🌍
+                      </span>
+
+                      <div>
+
+                        <small>
+                          DELIVERY COUNTRY
+                        </small>
+
+                        <strong>
+
+                          {{ getCountryFlag(order) }}
+
+                          {{ order.country || 'Italy' }}
+
+                        </strong>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </section>
+
+
+                <!-- ============================= -->
+                <!-- ORDER ITEMS -->
+                <!-- ============================= -->
+
+                <section class="items-section">
+
+
+                  <div class="section-title">
+
+                    <span>
+                      YOUR GIFTS
+                    </span>
+
+                    <strong>
+                      {{ getItemCount(order) }}
+                      {{ getItemCount(order) === 1 ? 'item' : 'items' }}
+                    </strong>
+
+                  </div>
+
+
+                  <div class="order-items">
+
+                    @for (
+                      item of order.items;
+                      track item.productId
+                    ) {
+
+                      <div class="order-item">
+
+
+                        <!-- IMAGE -->
+
+                        <div class="item-image">
+
+                          @if (
+                            item.imageUrl
+                          ) {
+
+                            <img
+                              [src]="item.imageUrl"
+                              [alt]="item.productName"
+                            >
+
+                          } @else {
+
+                            <span>
+                              {{ item.emoji || '🎁' }}
+                            </span>
+
+                          }
+
+                        </div>
+
+
+                        <!-- PRODUCT INFO -->
+
+                        <div class="item-info">
+
+                          <span class="item-category">
+                            GIFT
+                          </span>
+
+                          <h4>
+                            {{ item.productName }}
+                          </h4>
+
+                          <span class="item-quantity">
+                            Quantity:
+                            {{ item.quantity }}
+                          </span>
+
+                        </div>
+
+
+                        <!-- PRICE -->
+
+                        <div class="item-price">
+
+                          <span>
+
+                            {{ getCurrency(order) }}
+
+                            {{ item.price.toFixed(2) }}
+
+                            ×
+
+                            {{ item.quantity }}
+
+                          </span>
+
+
+                          <strong>
+
+                            {{ getCurrency(order) }}
+
+                            {{ item.total.toFixed(2) }}
+
+                          </strong>
+
+                        </div>
+
+                      </div>
+
+                    }
+
+                  </div>
+
+                </section>
+
+
+                <!-- ============================= -->
+                <!-- FOOTER / DELIVERY -->
+                <!-- ============================= -->
+
+                <div class="order-footer">
+
+
+                  <div class="delivery-box">
+
+                    <div class="delivery-icon">
+                      📍
+                    </div>
+
+                    <div>
+
+                      <span>
+
+                        {{ getCountryFlag(order) }}
+
+                        DELIVERY ADDRESS
+
+                      </span>
+
+                      <strong>
+                        {{ order.address }}
+                      </strong>
+
+                    </div>
+
+                  </div>
+
+
+                  <!-- TOTAL -->
+
+                  <div class="total-box">
+
+                    <div>
+
+                      <span>
+                        SUBTOTAL
+                      </span>
+
+                      <strong>
+                        {{ getCurrency(order) }}
+                        {{ order.subtotal.toFixed(2) }}
+                      </strong>
+
+                    </div>
+
+
+                    <div>
+
+                      <span>
+                        SHIPPING
+                      </span>
+
+                      <strong>
+                        {{ getCurrency(order) }}
+                        {{ order.shipping.toFixed(2) }}
+                      </strong>
+
+                    </div>
+
+
+                    <div class="grand-total">
+
+                      <span>
+                        ORDER TOTAL
+                      </span>
+
+                      <strong>
+
+                        {{ getCurrency(order) }}
+
+                        {{ order.total.toFixed(2) }}
+
+                      </strong>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+
+              </div>
+
+            }
+
+          </article>
+
+        }
+
+      </div>
+
+
+      <!-- ===================================== -->
+      <!-- SHOP MORE -->
+      <!-- ===================================== -->
+
+      <div class="continue-shopping">
+
+        <div>
+
+          <span>
+            Looking for something special?
+          </span>
+
+          <strong>
+            Discover more beautiful gifts.
+          </strong>
+
+        </div>
+
+
+        <a
+          routerLink="/products"
+          class="shop-more-button"
+        >
+          Continue Shopping →
+        </a>
+
+      </div>
+
+    }
+
+  </main>
+
+
+  <!-- ========================================= -->
+  <!-- FOOTER -->
+  <!-- ========================================= -->
+
+  <footer class="orders-footer">
+
+    <div class="footer-brand">
+
+      <div class="footer-icon">
+        🎁
+      </div>
+
+      <div>
+
+        <strong>
+          Ramveda
+        </strong>
+
+        <span>
+          Thoughtful gifts, made memorable.
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <p>
+      © 2026 Ramveda Gift Platform
+    </p>
+
+  </footer>
+
+</div>

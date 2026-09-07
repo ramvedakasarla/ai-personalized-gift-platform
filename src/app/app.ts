@@ -8,5 +8,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('ai-personalized-gift-platform');
+  protected readonly title = signal('Ramveda-personalized-gift-platform');
 }

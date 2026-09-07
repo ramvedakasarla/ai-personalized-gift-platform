@@ -1,0 +1,535 @@
+<div class="checkout-page">
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+
+  <header class="navbar">
+
+    <div class="navbar-inner">
+
+      <a
+        routerLink="/"
+        class="brand"
+      >
+        🎁 Ramveda Gifts
+      </a>
+
+      <nav class="nav-links">
+
+        <a routerLink="/">
+          Home
+        </a>
+
+        <a routerLink="/products">
+          Products
+        </a>
+
+        <a routerLink="/cart">
+          Cart
+        </a>
+
+        <a
+          routerLink="/checkout"
+          class="active"
+        >
+          Checkout
+        </a>
+
+      </nav>
+
+      <div class="secure-label">
+        🔒 Secure Checkout
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       PAGE HEADER
+  ========================== -->
+
+  <section class="checkout-header">
+
+    <div class="header-content">
+
+      <span class="eyebrow">
+        RAMVEDA GIFTS
+      </span>
+
+      <h1>
+        Complete Your Order
+      </h1>
+
+      <p>
+        Just a few details and your thoughtful gift
+        will be on its way.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+
+  <main class="checkout-container">
+
+    <div class="checkout-layout">
+
+
+      <!-- =========================
+           CUSTOMER DETAILS
+      ========================== -->
+
+      <section class="customer-card">
+
+        <div class="card-heading">
+
+          <div class="heading-icon">
+            👤
+          </div>
+
+          <div>
+
+            <h2>
+              Delivery Details
+            </h2>
+
+            <p>
+              Tell us where to deliver your gift.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- COUNTRY -->
+
+        <div class="country-display">
+
+          <span>
+            🌍 Delivering to
+          </span>
+
+          @if (country === 'India') {
+
+            <strong>
+              🇮🇳 India
+            </strong>
+
+          } @else {
+
+            <strong>
+              🇮🇹 Italy
+            </strong>
+
+          }
+
+        </div>
+
+
+        <form
+          (ngSubmit)="placeOrder()"
+          #checkoutForm="ngForm"
+        >
+
+
+          <!-- FULL NAME -->
+
+          <div class="form-group">
+
+            <label for="customerName">
+              Full Name
+            </label>
+
+            <div class="input-wrapper">
+
+              <span>
+                👤
+              </span>
+
+              <input
+                id="customerName"
+                type="text"
+                name="customerName"
+                [(ngModel)]="customerName"
+                placeholder="Enter your full name"
+                required
+              >
+
+            </div>
+
+          </div>
+
+
+          <!-- EMAIL -->
+
+          <div class="form-group">
+
+            <label for="email">
+              Email Address
+            </label>
+
+            <div class="input-wrapper">
+
+              <span>
+                ✉️
+              </span>
+
+              <input
+                id="email"
+                type="email"
+                name="email"
+                [(ngModel)]="email"
+                placeholder="you@example.com"
+                required
+              >
+
+            </div>
+
+          </div>
+
+
+          <!-- PHONE -->
+
+          <div class="form-group">
+
+            <label for="phone">
+              Phone Number
+            </label>
+
+            <div class="input-wrapper">
+
+              <span>
+                📱
+              </span>
+
+              <input
+                id="phone"
+                type="tel"
+                name="phone"
+                [(ngModel)]="phone"
+                placeholder="Enter your phone number"
+                required
+              >
+
+            </div>
+
+          </div>
+
+
+          <!-- ADDRESS -->
+
+          <div class="form-group">
+
+            <label for="address">
+              Delivery Address
+            </label>
+
+            <div class="input-wrapper textarea-wrapper">
+
+              <span>
+                📍
+              </span>
+
+              <textarea
+                id="address"
+                name="address"
+                [(ngModel)]="address"
+                placeholder="Enter your complete delivery address"
+                rows="5"
+                required
+              ></textarea>
+
+            </div>
+
+          </div>
+
+
+          <!-- ERROR -->
+
+          @if (errorMessage) {
+
+            <div class="error-message">
+
+              ⚠️
+
+              <span>
+                {{ errorMessage }}
+              </span>
+
+            </div>
+
+          }
+
+
+          <!-- PLACE ORDER MOBILE -->
+
+          <div class="mobile-place-order">
+
+            <button
+              type="submit"
+              [disabled]="loading"
+            >
+
+              @if (loading) {
+
+                <span>
+                  ⏳ Placing Order...
+                </span>
+
+              } @else {
+
+                <span>
+                  🔒 Place Order
+                </span>
+
+              }
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+
+
+      <!-- =========================
+           ORDER SUMMARY
+      ========================== -->
+
+      <aside class="summary-card">
+
+        <div class="summary-heading">
+
+          <div>
+
+            <h2>
+              Your Order
+            </h2>
+
+            <p>
+              {{ cartItems.length }} product(s)
+            </p>
+
+          </div>
+
+          <span class="gift-icon">
+            🎁
+          </span>
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+
+        <div class="summary-products">
+
+          @for (
+            item of cartItems;
+            track item.id
+          ) {
+
+            <div class="summary-product">
+
+              <div class="summary-image">
+
+                @if (item.imageUrl) {
+
+                  <img
+                    [src]="item.imageUrl"
+                    [alt]="item.name"
+                  >
+
+                } @else {
+
+                  <span>
+                    {{ item.emoji }}
+                  </span>
+
+                }
+
+              </div>
+
+
+              <div class="summary-product-info">
+
+                <h3>
+                  {{ item.name }}
+                </h3>
+
+                <p>
+                  {{ item.quantity }} ×
+                  {{ currency }}{{ item.price.toFixed(2) }}
+                </p>
+
+              </div>
+
+
+              <strong class="summary-product-total">
+
+                {{ currency }}{{
+                  (item.price * item.quantity)
+                    .toFixed(2)
+                }}
+
+              </strong>
+
+            </div>
+
+          }
+
+        </div>
+
+
+        <!-- SUMMARY -->
+
+        <div class="price-summary">
+
+          <div class="price-row">
+
+            <span>
+              Subtotal
+            </span>
+
+            <strong>
+              {{ currency }}{{ subtotal.toFixed(2) }}
+            </strong>
+
+          </div>
+
+
+          <div class="price-row">
+
+            <span>
+              Shipping
+            </span>
+
+            <strong>
+              {{ currency }}{{ shipping.toFixed(2) }}
+            </strong>
+
+          </div>
+
+
+          <div class="price-divider"></div>
+
+
+          <div class="total-row">
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+              {{ currency }}{{ total.toFixed(2) }}
+            </strong>
+
+          </div>
+
+        </div>
+
+
+        <!-- PLACE ORDER DESKTOP -->
+
+        <button
+          type="button"
+          class="place-order-button"
+          [disabled]="loading"
+          (click)="placeOrder()"
+        >
+
+          @if (loading) {
+
+            ⏳ Placing Order...
+
+          } @else {
+
+            🔒 Place Order
+
+          }
+
+        </button>
+
+
+        <!-- SECURITY -->
+
+        <div class="security-message">
+
+          <span>
+            🔒
+          </span>
+
+          <div>
+
+            <strong>
+              Secure Checkout
+            </strong>
+
+            <p>
+              Your personal information is
+              kept safe and secure.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <!-- BACK TO CART -->
+
+        <a
+          routerLink="/cart"
+          class="back-cart"
+        >
+          ← Back to Cart
+        </a>
+
+      </aside>
+
+    </div>
+
+  </main>
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
+  <footer>
+
+    <div class="footer-inner">
+
+      <div>
+
+        <strong>
+          🎁 Ramveda Gifts
+        </strong>
+
+        <p>
+          Thoughtful gifts for meaningful moments.
+        </p>
+
+      </div>
+
+      <div>
+
+        <p>
+          © 2026 Ramveda Gifts. All rights reserved.
+        </p>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+</div>

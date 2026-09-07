@@ -1,0 +1,219 @@
+<div class="min-h-screen bg-gray-50 p-8">
+
+  @if (order) {
+
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow p-8">
+
+      <!-- SUCCESS -->
+      <div class="text-center">
+
+        <div class="text-6xl">
+          🎉
+        </div>
+
+        <h1 class="text-3xl font-bold mt-4">
+          Order Confirmed!
+        </h1>
+
+        <p class="text-gray-600 mt-3">
+          Thank you for your purchase,
+          {{ order.customerName }}!
+        </p>
+
+        <!-- ORDER ID -->
+        <p class="text-2xl font-bold mt-6">
+          Order #{{ order.id }}
+        </p>
+
+        <!-- COUNTRY -->
+        <p class="text-lg mt-2">
+          {{ getCountryFlag() }}
+          {{ order.country }}
+        </p>
+
+        <!-- STATUS -->
+        <p class="text-green-600 font-bold mt-2">
+          {{ order.status }}
+        </p>
+
+      </div>
+
+
+      <!-- ORDER ITEMS -->
+      <div class="mt-8">
+
+        <h2 class="text-xl font-bold">
+          Order Items
+        </h2>
+
+        @for (item of order.items; track item.id) {
+
+          <div class="flex justify-between border-b py-4">
+
+            <div>
+
+              <p class="font-semibold">
+                {{ item.productName }}
+              </p>
+
+              <p class="text-gray-500">
+                {{ item.quantity }}
+                ×
+                {{ getCurrency() }}{{ item.price.toFixed(2) }}
+              </p>
+
+            </div>
+
+            <strong>
+              {{ getCurrency() }}{{ item.total.toFixed(2) }}
+            </strong>
+
+          </div>
+
+        }
+
+      </div>
+
+
+      <!-- PRICE SUMMARY -->
+      <div class="mt-8">
+
+        <div class="flex justify-between">
+
+          <span>
+            Subtotal
+          </span>
+
+          <strong>
+            {{ getCurrency() }}{{ order.subtotal.toFixed(2) }}
+          </strong>
+
+        </div>
+
+
+        <div class="flex justify-between mt-2">
+
+          <span>
+            Shipping
+          </span>
+
+          <strong>
+            {{ getCurrency() }}{{ order.shipping.toFixed(2) }}
+          </strong>
+
+        </div>
+
+
+        <div
+          class="flex justify-between border-t pt-4 mt-3 text-xl font-bold"
+        >
+
+          <span>
+            Total
+          </span>
+
+          <strong>
+            {{ getCurrency() }}{{ order.total.toFixed(2) }}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      <!-- CUSTOMER DETAILS -->
+      <div class="mt-8">
+
+        <h2 class="text-xl font-bold">
+          Customer Details
+        </h2>
+
+        <p class="mt-2">
+          <strong>Name:</strong>
+          {{ order.customerName }}
+        </p>
+
+        <p>
+          <strong>Email:</strong>
+          {{ order.email }}
+        </p>
+
+        <p>
+          <strong>Phone:</strong>
+          {{ order.phone }}
+        </p>
+
+      </div>
+
+
+      <!-- DELIVERY ADDRESS -->
+      <div class="mt-8">
+
+        <h2 class="text-xl font-bold">
+          Delivery Address
+        </h2>
+
+        <p class="text-gray-600 mt-2">
+          {{ order.address }}
+        </p>
+
+      </div>
+
+
+      <!-- BUTTON -->
+      <div class="text-center mt-8">
+
+        <a
+          routerLink="/orders"
+          class="inline-block bg-purple-600 text-white px-7 py-3 rounded-xl font-semibold"
+        >
+          My Orders
+        </a>
+
+      </div>
+
+    </div>
+
+  }
+
+
+  <!-- ERROR -->
+  @else if (errorMessage) {
+
+    <div class="text-center">
+
+      <div class="text-5xl">
+        ❌
+      </div>
+
+      <h2 class="text-2xl font-bold mt-4">
+        Order could not be loaded
+      </h2>
+
+      <p class="text-red-600 mt-3">
+        {{ errorMessage }}
+      </p>
+
+    </div>
+
+  }
+
+
+  <!-- LOADING -->
+  @else {
+
+    <div class="text-center">
+
+      <div class="text-5xl">
+        ⏳
+      </div>
+
+      <h2 class="text-2xl font-bold mt-4">
+        Loading order...
+      </h2>
+
+    </div>
+
+  }
+
+</div>

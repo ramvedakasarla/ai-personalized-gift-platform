@@ -1,0 +1,557 @@
+<div class="product-details-page">
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-inner">
+
+      <a routerLink="/" class="brand">
+        🎁 Ramveda Gifts
+      </a>
+
+      <nav class="nav-links">
+        <a routerLink="/">Home</a>
+        <a routerLink="/products">Products</a>
+        <a routerLink="/orders">My Orders</a>
+      </nav>
+
+      <a routerLink="/cart" class="cart-button">
+        🛒 Cart
+      </a>
+
+    </div>
+  </header>
+
+
+  <!-- LOADING -->
+  @if (loading) {
+
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading product...</p>
+    </div>
+
+  }
+
+
+  <!-- ERROR -->
+  @else if (errorMessage) {
+
+    <div class="error-state">
+
+      <div class="error-icon">😔</div>
+
+      <h2>Product Not Found</h2>
+
+      <p>
+        {{ errorMessage }}
+      </p>
+
+      <a
+        routerLink="/products"
+        class="back-button"
+      >
+        ← Back to Products
+      </a>
+
+    </div>
+
+  }
+
+
+  <!-- PRODUCT -->
+  @else if (product) {
+
+    <main class="product-container">
+
+      <!-- BREADCRUMB -->
+      <div class="breadcrumb">
+
+        <a routerLink="/products">
+          Products
+        </a>
+
+        <span>›</span>
+
+        <span>
+          {{ product.name }}
+        </span>
+
+      </div>
+
+
+      <!-- PRODUCT CARD -->
+      <section class="product-detail-card">
+
+
+        <!-- IMAGE -->
+        <div class="product-image">
+
+          @if (product.imageUrl) {
+
+            <img
+              [src]="product.imageUrl"
+              [alt]="product.name"
+            >
+
+          } @else {
+
+            <span class="product-emoji">
+              {{ product.emoji }}
+            </span>
+
+          }
+
+        </div>
+
+
+        <!-- INFORMATION -->
+        <div class="product-info">
+
+          <span class="category">
+            {{ product.category }}
+          </span>
+
+
+          <h1>
+            {{ product.name }}
+          </h1>
+
+
+          <!-- COUNTRY SELECTOR -->
+          <div class="country-selector">
+
+            <span class="country-label">
+              🌍 Deliver to:
+            </span>
+
+            <button
+              type="button"
+              [class.selected]="country === 'Italy'"
+              (click)="selectCountry('Italy')"
+            >
+              🇮🇹 Italy
+            </button>
+
+            <button
+              type="button"
+              [class.selected]="country === 'India'"
+              (click)="selectCountry('India')"
+            >
+              🇮🇳 India
+            </button>
+
+          </div>
+
+
+          <!-- PRICE -->
+          <div class="price">
+            {{ currency }}{{ getProductPrice().toFixed(2) }}
+          </div>
+
+
+          <!-- DESCRIPTION -->
+          <p class="description">
+            {{ product.description }}
+          </p>
+
+
+          <div class="divider"></div>
+
+
+          <!-- QUANTITY -->
+          <div class="quantity-section">
+
+            <label>
+              Quantity
+            </label>
+
+            <div class="quantity-control">
+
+              <button
+                type="button"
+                (click)="decreaseQuantity()"
+              >
+                −
+              </button>
+
+              <span>
+                {{ quantity }}
+              </span>
+
+              <button
+                type="button"
+                (click)="increaseQuantity()"
+              >
+                +
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <!-- TOTAL -->
+          <div class="total-row">
+
+            <span>
+              Total
+            </span>
+
+            <strong>
+              {{ currency }}{{ (getProductPrice() * quantity).toFixed(2) }}
+            </strong>
+
+          </div>
+
+
+          <!-- ADD TO CART -->
+          <button
+            type="button"
+            class="add-cart-button"
+            (click)="addToCart()"
+          >
+            🛒 Add to Cart
+          </button>
+
+
+          <!-- SUCCESS MESSAGE -->
+          @if (cartMessage) {
+
+            <div class="cart-message">
+              ✓ {{ cartMessage }}
+            </div>
+
+          }
+
+
+          <!-- BACK -->
+          <a
+            routerLink="/products"
+            class="back-link"
+          >
+            ← Continue Shopping
+          </a>
+
+        </div>
+
+      </section>
+
+
+      <!-- ========================= -->
+      <!-- REVIEWS -->
+      <!-- ========================= -->
+
+      <section class="reviews-section">
+
+        <div class="reviews-header">
+
+          <div>
+
+            <h2>
+              ⭐ Customer Reviews
+            </h2>
+
+            @if (reviews.length > 0) {
+
+              <p class="average-rating">
+
+                <strong>
+                  {{ getAverageRating().toFixed(1) }}
+                </strong>
+
+                / 5
+
+                ⭐
+
+                <span>
+                  ({{ reviews.length }}
+                  {{ reviews.length === 1 ? 'review' : 'reviews' }})
+                </span>
+
+              </p>
+
+            } @else {
+
+              <p class="no-reviews">
+                No reviews yet. Be the first to review this product!
+              </p>
+
+            }
+
+          </div>
+
+        </div>
+
+
+        <!-- REVIEW FORM -->
+        <div class="review-form">
+
+          <h3>
+            Write a Review
+          </h3>
+
+
+          <!-- NAME -->
+          <div class="form-group">
+
+            <label>
+              Your Name
+            </label>
+
+            <input
+              type="text"
+              [(ngModel)]="reviewName"
+              placeholder="Enter your name"
+            >
+
+          </div>
+
+
+          <!-- RATING -->
+          <div class="form-group">
+
+            <label>
+              Your Rating
+            </label>
+
+            <select
+              [(ngModel)]="reviewRating"
+            >
+
+              <option [ngValue]="5">
+                ⭐⭐⭐⭐⭐ Excellent
+              </option>
+
+              <option [ngValue]="4">
+                ⭐⭐⭐⭐ Very Good
+              </option>
+
+              <option [ngValue]="3">
+                ⭐⭐⭐ Good
+              </option>
+
+              <option [ngValue]="2">
+                ⭐⭐ Average
+              </option>
+
+              <option [ngValue]="1">
+                ⭐ Poor
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- COMMENT -->
+          <div class="form-group">
+
+            <label>
+              Your Review
+            </label>
+
+            <textarea
+              [(ngModel)]="reviewComment"
+              rows="4"
+              placeholder="Share your experience..."
+            ></textarea>
+
+          </div>
+
+
+          <!-- ERROR -->
+          @if (reviewError) {
+
+            <div class="review-error">
+              {{ reviewError }}
+            </div>
+
+          }
+
+
+          <!-- SUCCESS -->
+          @if (reviewMessage) {
+
+            <div class="review-success">
+              ✓ {{ reviewMessage }}
+            </div>
+
+          }
+
+
+          <!-- SUBMIT -->
+          <button
+            type="button"
+            class="submit-review-button"
+            [disabled]="submittingReview"
+            (click)="submitReview()"
+          >
+
+            @if (submittingReview) {
+              Submitting...
+            } @else {
+              ⭐ Submit Review
+            }
+
+          </button>
+
+        </div>
+
+
+        <!-- REVIEW LIST -->
+        @if (reviews.length > 0) {
+
+          <div class="review-list">
+
+            @for (review of reviews; track review.id) {
+
+              <article class="review-card">
+
+                <div class="review-top">
+
+                  <div class="review-customer">
+
+                    <div class="customer-avatar">
+                      {{ review.customerName.charAt(0).toUpperCase() }}
+                    </div>
+
+                    <div>
+
+                      <strong>
+                        {{ review.customerName }}
+                      </strong>
+
+                      @if (review.createdAt) {
+
+                        <small>
+                          {{ review.createdAt | date:'dd MMM yyyy' }}
+                        </small>
+
+                      }
+
+                    </div>
+
+                  </div>
+
+
+                  <div class="review-rating">
+
+                    @for (
+                      star of [1,2,3,4,5];
+                      track star
+                    ) {
+
+                      <span>
+                        {{ star <= review.rating ? '⭐' : '☆' }}
+                      </span>
+
+                    }
+
+                  </div>
+
+                </div>
+
+
+                <p class="review-comment">
+                  {{ review.comment }}
+                </p>
+
+              </article>
+
+            }
+
+          </div>
+
+        }
+
+      </section>
+
+
+      <!-- FEATURES -->
+      <section class="features">
+
+        <div class="feature">
+
+          <span>🎁</span>
+
+          <div>
+
+            <strong>
+              Thoughtful Gifts
+            </strong>
+
+            <p>
+              Made for meaningful moments.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="feature">
+
+          <span>✨</span>
+
+          <div>
+
+            <strong>
+              Personalized
+            </strong>
+
+            <p>
+              Add a special touch to your gift.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="feature">
+
+          <span>💝</span>
+
+          <div>
+
+            <strong>
+              Made with Love
+            </strong>
+
+            <p>
+              Perfect for every occasion.
+            </p>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+  }
+
+
+  <!-- FOOTER -->
+  <footer>
+
+    <div class="footer-inner">
+
+      <strong>
+        🎁 Ramveda Gifts
+      </strong>
+
+      <p>
+        Thoughtful gifts for meaningful moments.
+      </p>
+
+      <p>
+        © 2026 Ramveda Gifts. All rights reserved.
+      </p>
+
+    </div>
+
+  </footer>
+
+</div>

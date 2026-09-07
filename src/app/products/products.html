@@ -1,0 +1,357 @@
+<div class="products-page">
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+
+  <header class="navbar">
+
+    <div class="navbar-inner">
+
+      <a routerLink="/" class="brand">
+        🎁 Ramveda Gifts
+      </a>
+
+      <nav class="nav-links">
+
+        <a routerLink="/">
+          Home
+        </a>
+
+        <a
+          routerLink="/products"
+          class="active"
+        >
+          Products
+        </a>
+
+        <a routerLink="/orders">
+          My Orders
+        </a>
+
+      </nav>
+
+      <div class="nav-actions">
+
+        <a
+          routerLink="/cart"
+          class="cart-button"
+        >
+
+          🛒 Cart
+
+          @if (cartCount > 0) {
+
+            <span class="cart-count">
+              {{ cartCount }}
+            </span>
+
+          }
+
+        </a>
+
+      </div>
+
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       HERO
+  ========================== -->
+
+  <section class="hero">
+
+    <div class="hero-content">
+
+      <span class="eyebrow">
+        RAMVEDA GIFTS
+      </span>
+
+      <h1>
+        Find a Gift They'll Remember.
+      </h1>
+
+      <p>
+        Thoughtfully selected gifts for birthdays, couples,
+        graduations, special occasions and every beautiful moment.
+      </p>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       COUNTRY SELECTOR
+  ========================== -->
+
+  <section class="country-section">
+
+    <div class="country-selector">
+
+      <span class="country-label">
+        🌍 Deliver to:
+      </span>
+
+      <button
+        type="button"
+        [class.selected]="country === 'Italy'"
+        (click)="selectCountry('Italy')"
+      >
+        🇮🇹 Italy
+      </button>
+
+      <button
+        type="button"
+        [class.selected]="country === 'India'"
+        (click)="selectCountry('India')"
+      >
+        🇮🇳 India
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       SEARCH
+  ========================== -->
+
+  <section class="controls">
+
+    <div class="search-box">
+
+      <span>
+        🔎
+      </span>
+
+      <input
+        type="text"
+        [(ngModel)]="searchText"
+        placeholder="Search gifts..."
+      >
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       CATEGORIES
+  ========================== -->
+
+  <section class="categories">
+
+    <div class="category-list">
+
+      @for (category of categories; track category) {
+
+        <button
+          type="button"
+          (click)="selectCategory(category)"
+          [class.selected]="selectedCategory === category"
+        >
+          {{ category }}
+        </button>
+
+      }
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       PRODUCTS
+  ========================== -->
+
+  <main class="products-container">
+
+    @if (filteredProducts.length > 0) {
+
+      <div class="products-grid">
+
+        @for (product of filteredProducts; track product.id) {
+
+          <article class="product-card">
+
+
+            <!-- PRODUCT IMAGE -->
+
+            <div
+              class="product-image"
+              [routerLink]="['/product', product.id]"
+            >
+
+              @if (product.imageUrl) {
+
+                <img
+                  [src]="product.imageUrl"
+                  [alt]="product.name"
+                  class="product-real-image"
+                >
+
+              } @else {
+
+                <span class="product-emoji">
+                  {{ product.emoji }}
+                </span>
+
+              }
+
+
+              <span class="category-badge">
+                {{ product.category }}
+              </span>
+
+            </div>
+
+
+            <!-- PRODUCT DETAILS -->
+
+            <div
+              class="product-details"
+              [routerLink]="['/product', product.id]"
+            >
+
+              <div class="product-title-row">
+
+                <h2>
+                  {{ product.name }}
+                </h2>
+
+              </div>
+
+
+              <p class="product-description">
+                {{ product.description }}
+              </p>
+
+
+              <!-- PRICE -->
+
+              <div class="product-bottom">
+
+                <div class="price">
+
+                  {{ currency }}{{ getProductPrice(product).toFixed(2) }}
+
+                </div>
+
+                <button
+                  type="button"
+                  (click)="addToCart(product); $event.stopPropagation()"
+                  class="add-button"
+                >
+                  🛒 Add to Cart
+                </button>
+
+              </div>
+
+            </div>
+
+          </article>
+
+        }
+
+      </div>
+
+    }
+
+
+    <!-- =========================
+         EMPTY STATE
+    ========================== -->
+
+    @if (filteredProducts.length === 0) {
+
+      <div class="empty-state">
+
+        <div class="empty-icon">
+          🎁
+        </div>
+
+        <h2>
+          No gifts found
+        </h2>
+
+        <p>
+          Try another search term or choose a different category.
+        </p>
+
+      </div>
+
+    }
+
+  </main>
+
+
+  <!-- =========================
+       AI SECTION
+  ========================== -->
+
+  <section class="ai-section">
+
+    <div class="ai-content">
+
+      <span class="ai-icon">
+        ✨
+      </span>
+
+      <h2>
+        Not sure what to gift?
+      </h2>
+
+      <p>
+        Let AI help you discover a thoughtful gift
+        based on the person and occasion.
+      </p>
+
+      <button
+        type="button"
+        class="ai-button"
+      >
+        ✨ Get AI Recommendation
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
+  <footer>
+
+    <div class="footer-inner">
+
+      <div>
+
+        <strong>
+          🎁 Ramveda Gifts
+        </strong>
+
+        <p>
+          Thoughtful gifts for meaningful moments.
+        </p>
+
+      </div>
+
+      <div>
+
+        <p>
+          © 2026 Ramveda Gifts. All rights reserved.
+        </p>
+
+      </div>
+
+    </div>
+
+  </footer>
+
+</div>

@@ -1,0 +1,109 @@
+<header class="bg-white shadow-sm">
+
+  <div class="max-w-7xl mx-auto px-6 py-4">
+
+    <nav class="flex items-center justify-between">
+
+      <!-- Logo -->
+
+      <a
+        routerLink="/"
+        class="text-2xl font-bold text-purple-700">
+
+        Ramveda Gifts
+
+      </a>
+
+
+      <!-- Navigation -->
+
+      <div class="flex items-center gap-6">
+
+        <a
+          routerLink="/"
+          class="text-gray-700 hover:text-purple-600 font-medium">
+
+          Home
+
+        </a>
+
+        <a
+          routerLink="/products"
+          class="text-gray-700 hover:text-purple-600 font-medium">
+
+          Products
+
+        </a>
+
+        <a
+          routerLink="/cart"
+          class="text-gray-700 hover:text-purple-600 font-medium">
+
+          🛒 Cart
+
+          @if (cartCount > 0) {
+
+            <span>
+              ({{ cartCount }})
+            </span>
+
+          }
+
+        </a>
+
+        <a
+          routerLink="/orders"
+          class="text-gray-700 hover:text-purple-600 font-medium">
+
+          📦 My Orders
+
+        </a>
+
+      </div>
+
+    </nav>
+
+  </div>
+
+</header>
+
+
+<!-- Hero -->
+
+<section class="bg-gray-50 min-h-screen">
+
+  <div class="max-w-7xl mx-auto px-6 py-20 text-center">
+
+    <div class="text-6xl mb-6">
+      🎁
+    </div>
+
+    <h1 class="text-5xl font-bold text-gray-900">
+
+      Find the Perfect Gift
+
+    </h1>
+
+    <p class="text-xl text-gray-600 mt-6">
+
+      Thoughtful gifts for birthdays, couples,
+      graduations, special occasions and more.
+
+    </p>
+
+
+    <div class="mt-8">
+
+      <a
+        routerLink="/products"
+        class="inline-block bg-purple-600 text-white px-8 py-4 rounded-xl font-semibold">
+
+        Explore Gifts
+
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
